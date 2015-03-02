@@ -1,0 +1,56 @@
+notes_python_udp_socket_exampleDocument1.txt
+
+import socket
+
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005
+MESSAGE = "Hello, World!"
+
+print "UDP target IP:", UDP_IP
+print "UDP target port:", UDP_PORT
+print "message:", MESSAGE
+
+sock = socket.socket(socket.AF_INET, # Internet
+             socket.SOCK_DGRAM) # UDP
+sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+
+--------------------------------------------
+print("UDP target IP:", UDP_IP)
+print("UDP target port:", UDP_PORT)
+print("message:", MESSAGE)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+sock.sendto(bytes(MESSAGE, "utf-8"), (UDP_IP, UDP_PORT))
+
+In your case, you want to specify a host that can listen to both the local machine,
+ and another machine on the same Ethernet network. You could get your host address 
+on the Ethernet interface and bind that. (Your machine can talk to itself on any of 
+its interfaces.) Usually, getting your address on "whatever interface is the default" 
+works for this too—you'll see code that binds to socket.gethostname() in some places, 
+like the Python Socket Programming HOWTO. But binding to INADDR_ANY is a lot simpler. 
+Unless you want to make sure that machines on certain interfaces can't reach 
+you (which is usually only a problem if you're, e.g., building a server intended to 
+live on a firewall's DMZ), you'll usually want to use INADDR_ANY.
+
+Finally, how do you bind to INADDR_ANY? The short answer is: just use UDP_IP = '', or 
+UDP_IP = '0.0.0.0' if you want to be more explicit. Anyone who understands sockets, even 
+if they don't know any Python, will understand what '0.0.0.0' means in server 
+code.(You may wonder why Python doesn't have a constant for this in the socket module, 
+especially when even lower-level languages like C do. The answer is that it does, but 
+it's not really usable.**)
+
+* Note that being bound to a single address doesn't mean you can only receive packets 
+from a single address; it means you can receive packets from all networks where that 
+single address is reachable. For example, if your machine has a LAN connection, where 
+your address is 10.0.0.100, and a WAN connection, where your address is 8.9.10.11, if 
+you bind 10.0.0.100, you can receive packets from other LAN clients like 10.0.0.201 
+and 10.0.0.202. But you can't receive packets from WAN clients like 9.10.11.12 as 
+10.0.0.100.
+
+** In the low-level sockets API, dotted-string addresses like '0.0.0.0' are 
+converted to 32-bit integers like 0. Python sometimes represents those integers 
+as ints, and sometimes as 4-byte buffers like b'\0\0\0\0'. Depending on your platform 
+and version, the socket.INADDR_ANY constant can be either 0 or b'\0\0\0\0'. The bind 
+method will not take 0, and may not take b'\0\0\0\0'. And you can't convert to '0.0.0.0' 
+without first checking which form you have, then calling the right functions on it. 
+This is ugly. That's why it's easier to just use '0.0.0.0'.=
