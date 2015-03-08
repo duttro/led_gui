@@ -31,6 +31,9 @@
 ## 022515 worked on ShowObjectDicts_top_canvas(): in Assembly_TAB, not workin yet
 ## 030115 changed file name to led_GUI.py
 ## 030115 testing git update
+## 030715 working on seq out
+## 030715 happy to report assembly_tab anaimate canvase1 works
+
 
 import pdb
 import time
@@ -174,9 +177,9 @@ def main():
         nb.add(f2, text='ASSEMBLY')
         nb.add(f3, text='page3')
         
-        # draw the pages
-        LED_TAB(f1,tx_queue)
-        Assembly_TAB(f2, tx_queue)
+        # draw the tabbed pages
+        led_tab = LED_TAB(f1,tx_queue)
+        assembly_tab = Assembly_TAB(f2, tx_queue)
         
         root.mainloop()
 

@@ -68,7 +68,7 @@ def Blab(Level,Message):
     """
     Display Message if Verbosity says to.
     """
-    if Verbosity >= Level:
+    if Verbosity > Level:
         print Message
     
 class Dragged:
@@ -380,7 +380,7 @@ class CanvasDnd(Canvas):
         ####################################3
         # reference the Dragged class
         #Add the DraggedObject to the dictionary of objects which are on this canvas.
-        print '$$$CanvasDnd:dnd_enter: Image    %s'%(self.image_filepath)
+        Blab(0, "$$$CanvasDnd:dnd_enter: Image    %s"%(self.image_filepath) )
         self.ObjectDict[Source.Name] = (Source,XY,self.image_filepath)
         #pdb.set_trace()
         
@@ -402,12 +402,12 @@ class CanvasDnd(Canvas):
         Blab(2, "Receptor: dnd_motion")
         #Figure out where the mouse is with respect to this widget
         XY = MouseInWidget(self,Event)
-        print("Receptor: dnd_motion XY = %s"% (str(XY)) )
+        Blab(0,"Receptor: dnd_motion XY = %s"% (str(XY)) )
         #Ask the DraggedObject to move it's representation of itself to the
         #    new mouse pointer location.
         Source.Move(XY)
         # update the coords
-        print 'dnd_motion: my_image    %s'%(self.image_filepath)
+        Blab(0, "dnd_motion: my_image    %s"%(self.image_filepath)   )
         self.ObjectDict[Source.Name] = (Source,XY,self.image_filepath)
         
     def dnd_commit(self,Source,Event):
@@ -415,7 +415,7 @@ class CanvasDnd(Canvas):
         #This demo doesn't need to do anything here (the DraggedObject is
         #    already in self.ObjectDict) but a real application would
         #    likely want to do stuff here.
-        print 'dnd_commit: my_image    %s'%(self.image_filepath)
+        Blab(0, "dnd_commit: my_image    %s"%(self.image_filepath)  )
         Blab(1, "Receptor: dnd_commit; Object received= %s"%`Source`)
 
     #----- code added for demo purposes -----

@@ -1,4 +1,5 @@
 ## 021715 class LED_TAB moved into file LED_TAB.py
+## 030115 updated file references to support new file structure, added initialdir=('../led_data_files/'),
 
 
 
@@ -57,14 +58,14 @@ class LED_TAB:
 
         ##############################################################3
         print"GUI init"
-        self.image0 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image1 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image2 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image3 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image4 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image5 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image6 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
-        self.image7 = Tkinter.PhotoImage(file = "./led_array_empty.gif")
+        self.image0 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image1 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image2 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image3 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image4 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image5 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image6 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
+        self.image7 = Tkinter.PhotoImage(file = "../led_data_files/led_array_empty.gif")
         
         self.color0 = '#ff0000'
         self.color1 = '#00ff00'
@@ -389,7 +390,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store0.configure(text = 'ACTIVE')
         self.button_Store0.configure(text = 'Store0')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         print"cb_Store0: Saving gif file %s" % (save_filename)
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image0 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on to the button 
@@ -404,7 +405,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store1.configure(text = 'ACTIVE')
         self.button_Store1.configure(text = 'Store1')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image1 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image1.configure(image = self.image1)
@@ -418,7 +419,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store2.configure(text = 'ACTIVE')
         self.button_Store2.configure(text = 'Store2')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image2 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image2.configure(image = self.image2)
@@ -432,7 +433,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store3.configure(text = 'ACTIVE')
         self.button_Store3.configure(text = 'Store3')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image3 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image3.configure(image = self.image3)
@@ -446,7 +447,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store4.configure(text = 'ACTIVE')
         self.button_Store4.configure(text = 'Store4')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image4 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image4.configure(image = self.image4)
@@ -460,7 +461,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store5.configure(text = 'ACTIVE')
         self.button_Store5.configure(text = 'Store5')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image5 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image5.configure(image = self.image5)
@@ -474,7 +475,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store6.configure(text = 'ACTIVE')
         self.button_Store6.configure(text = 'Store6')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image6 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image6.configure(image = self.image6)
@@ -488,7 +489,7 @@ class LED_TAB:
         Matrix= bytearray()
         self.button_Store7.configure(text = 'ACTIVE')
         self.button_Store7.configure(text = 'Store7')
-        save_filename = tkFileDialog.asksaveasfilename(filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
+        save_filename = tkFileDialog.asksaveasfilename(initialdir=('../led_data_files/'),filetypes=self.myFormats ,title="Save the image as...",initialfile='new.gif')
         [filename,Matrix] = self.make_GIF_fromBigMatrix(save_filename)
         self.image7 = Tkinter.PhotoImage(file = save_filename) #load the newly saved image on the button 
         self.button_image7.configure(image = self.image7)
@@ -500,7 +501,7 @@ class LED_TAB:
 
     def cb_Load0(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'), filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image0 = Tkinter.PhotoImage(file = filename)   
         self.button_image0.configure(image = self.image0)
@@ -511,7 +512,7 @@ class LED_TAB:
     
     def cb_Load1(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image1 = Tkinter.PhotoImage(file = filename)
         self.button_image1.configure(image = self.image1)
@@ -522,7 +523,7 @@ class LED_TAB:
         
     def cb_Load2(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image2 = Tkinter.PhotoImage(file = filename)
         self.button_image2.configure(image = self.image2)
@@ -533,7 +534,7 @@ class LED_TAB:
     
     def cb_Load3(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image3 = Tkinter.PhotoImage(file = filename)
         self.button_image3.configure(image = self.image3)
@@ -544,7 +545,7 @@ class LED_TAB:
     
     def cb_Load4(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image4 = Tkinter.PhotoImage(file = filename)
         self.button_image4.configure(image = self.image4)
@@ -555,7 +556,7 @@ class LED_TAB:
     
     def cb_Load5(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image5 = Tkinter.PhotoImage(file = filename)
         self.button_image5.configure(image = self.image5)
@@ -566,7 +567,7 @@ class LED_TAB:
     
     def cb_Load6(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image6 = Tkinter.PhotoImage(file = filename)
         self.button_image6.configure(image = self.image6)
@@ -577,7 +578,7 @@ class LED_TAB:
     
     def cb_Load7(self):
         Matrix= bytearray()
-        self.file_path = tkFileDialog.askopenfilename(filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
+        self.file_path = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
         [filename,Matrix] = self.load_GIF_return_as_array()
         self.image7 = Tkinter.PhotoImage(file = filename)
         self.button_image7.configure(image = self.image7)
