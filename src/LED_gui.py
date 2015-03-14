@@ -20,7 +20,7 @@
 ## 112814 added function send_array_as_asc_each_pixel_rgb to transmit byte array
 ## 112914 load_GIF_return_as_array needs to be modified to load the .dat file into matrix
 ## 011715 many updates
-## 012915 added heartbeat to seraial class
+## 012915 added heartbeat to serial class
 ## 013115 tempBuffer now and array of int values rgb for each pixel
 ## 020515 updated make_GIF_fromBigMatrix
 ## 020615 working on updating load save buttons

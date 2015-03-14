@@ -116,14 +116,6 @@ class LED_TAB:
         self.button_clear_colors = Tkinter.Button(win, text = "Clear LEDs", bg='white', command = self.cb_clear_colors)
         self.button_clear_colors.grid(row=0,column=6)
 
-        self.enter_data_1 = Tkinter.Entry(win, bg = "pale green")  # creates a text entry field
-        self.enter_data_1.grid(row=0, column=8)
-        self.enter_data_1.insert(0, "enter delay") # Place text into the box.
-
-        self.animate_loop = Tkinter.Button(win, text = "Animation Loop", bg='white', command = self.cb_animate_loop)
-        self.animate_loop.grid(row=0,column=9)
-
-
         #######################################     
         self.button_Load0 = Tkinter.Button(win, text = "Load 0", command = self.cb_Load0, compound="left")
         self.button_Load0.grid(row=1, column=0)
