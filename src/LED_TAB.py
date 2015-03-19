@@ -26,7 +26,7 @@ from Dialog import Entry
 ## my classes
 from dnd import *
 from LED_TAB import *
-from Assembly_TAB import *
+from Timeline_TAB import *
 
 
 class LED_TAB:

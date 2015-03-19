@@ -21,7 +21,7 @@
 ## 112914 load_GIF_return_as_array needs to be modified to load the .dat file into matrix
 ## 011715 many updates
 ## 012915 added heartbeat to serial class
-## 013115 tempBuffer now and array of int values rgb for each pixel
+## 013115 tempBuffer now and array of int values RGB for each pixel
 ## 020515 updated make_GIF_fromBigMatrix
 ## 020615 working on updating load save buttons
 ## 021415 load, store and orientation fixed
@@ -33,6 +33,7 @@
 ## 030115 testing git update
 ## 030715 working on seq out
 ## 030715 happy to report assembly_tab anaimate canvase1 works
+## 031814 changed class name to TIMELINE
 
 
 import pdb
@@ -57,7 +58,7 @@ from Dialog import Entry
 ## my classes
 from dnd import *
 from LED_TAB import *
-from Assembly_TAB import *
+from Timeline_TAB import *
 
 
 
@@ -174,12 +175,12 @@ def main():
         
         # create the pages
         nb.add(f1, text='LED MATRIX')
-        nb.add(f2, text='ASSEMBLY')
+        nb.add(f2, text='TIMELINE')
         nb.add(f3, text='page3')
         
         # draw the tabbed pages
         led_tab = LED_TAB(f1,tx_queue)
-        assembly_tab = Assembly_TAB(f2, tx_queue)
+        timeline_tab = Timeline_TAB(f2, tx_queue)
         
         root.mainloop()
 
