@@ -34,6 +34,7 @@
 ## 030715 working on seq out
 ## 030715 happy to report assembly_tab anaimate canvase1 works
 ## 031814 changed class name to TIMELINE
+## 032815 added SOUND_TAB to access wav files
 
 
 import pdb
@@ -58,6 +59,7 @@ from Dialog import Entry
 ## my classes
 from dnd import *
 from LED_TAB import *
+from SOUND_TAB import *
 from Timeline_TAB import *
 
 
@@ -90,8 +92,7 @@ class Serial:
               try:
                  #self.master = master
                  TXmsg = tx_queue.get( )
-                 #print "sending msg %s" % (TXmsg)
-
+                 #print "LED_GUI: sending msg %s" % (TXmsg)
                  sock.sendto(TXmsg, (UDP_IP, UDP_PORT))
               except Queue.Empty:
                  # just on general principles, although we don't
@@ -104,7 +105,7 @@ class Serial:
             else:
                idle_counter = 0
 
-            if idle_counter == 2000:
+            #if idle_counter == 2000:
                heartbeat_count = heartbeat_count +1
                TXmsg = "Hb"
                print"sending HeartBeat message " + TXmsg
@@ -176,12 +177,12 @@ def main():
         # create the pages
         nb.add(f1, text='LED MATRIX')
         nb.add(f2, text='TIMELINE')
-        nb.add(f3, text='page3')
+        nb.add(f3, text='SOUND')
         
         # draw the tabbed pages
         led_tab = LED_TAB(f1,tx_queue)
         timeline_tab = Timeline_TAB(f2, tx_queue)
-        
+        sound_tab = SOUND_TAB(f3,tx_queue)
         root.mainloop()
 
 if __name__ == "__main__":
