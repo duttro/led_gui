@@ -10,7 +10,7 @@ import socket
 import string
 import threading
 import Queue
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from tkColorChooser import askcolor
 
 import Tkdnd
@@ -24,7 +24,8 @@ from Dialog import Entry
 
 ############
 ## my classes
-from dnd import *
+from DraggedDnd import *
+from CanvasDnd import *
 from LED_TAB import *
 from Timeline_TAB import *
 
@@ -1053,12 +1054,9 @@ class LED_TAB:
           tempBuffer.append(g)
           tempBuffer.append(b)
           draw.rectangle( s , fill=self.bigMatrix[(s[3]/12)-1][(s[2]/12)-1] )
-          
         # save the gif file
         img.save(filename, 'GIF', transparency=0)
-
         self.update_file_LED_DAT(filename,tempBuffer)
-
         return [filename,tempBuffer]
     
     def update_file_LED_DAT(self,filename,matrix):  

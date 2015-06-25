@@ -17,7 +17,8 @@ import operator # to sort the dictionary
 
 ##############
 ## my classes
-from dnd import *
+from DraggedDnd import *
+from CanvasDnd import *
 from LED_TAB import *
 
 class Timeline_TAB:
@@ -31,7 +32,7 @@ class Timeline_TAB:
         This is invoked by InitiationObject to start the drag and drop process
         """
         #Create an object to be dragged
-        ThingToDrag = Dragged()
+        ThingToDrag = Dragged(self.selected_button_image_filepath)
         #print("PASSING image file path to CANVAS DND = %s"%(CanvasDnd.image_filepath))
         #Pass the object to be dragged and the event to Tkdnd
         Tkdnd.dnd_start(ThingToDrag,Event)
@@ -84,10 +85,10 @@ class Timeline_TAB:
     
       def get_image_filepath():
         self.selected_button_image_filepath = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
-        Dragged.image_filepath   = self.selected_button_image_filepath
-        CanvasDnd.image_filepath = self.selected_button_image_filepath
-        print("Timeline_TAB sent Dragged   image file path = %s"%(Dragged.image_filepath))
-        print("Timeline_TAB sent CanvasDnd image file path = %s"%(CanvasDnd.image_filepath))
+        ###Dragged.image_filepath   = self.selected_button_image_filepath
+        ###CanvasDnd.image_filepath = self.selected_button_image_filepath
+        ###print("Timeline_TAB sent Dragged   image file path = %s"%(Dragged.image_filepath))
+        ###print("Timeline_TAB sent CanvasDnd image file path = %s"%(CanvasDnd.image_filepath))
         
         
       #Create a button to "select buttons image" file 

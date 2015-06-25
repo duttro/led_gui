@@ -35,6 +35,7 @@
 ## 030715 happy to report assembly_tab anaimate canvase1 works
 ## 031814 changed class name to TIMELINE
 ## 032815 added SOUND_TAB to access wav files
+## 062415 fixed dnd in DraggedDnd.py
 
 
 import pdb
@@ -57,7 +58,8 @@ from ScrolledText import ScrolledText
 from Dialog import Entry
 ############
 ## my classes
-from dnd import *
+from DraggedDnd import *
+from CanvasDnd import *
 from LED_TAB import *
 from SOUND_TAB import *
 from Timeline_TAB import *
@@ -175,13 +177,13 @@ def main():
         f3 = Tkinter.Frame()
         
         # create the pages
-        nb.add(f1, text='LED MATRIX')
-        nb.add(f2, text='TIMELINE')
+        nb.add(f1, text='TIMELINE')
+        nb.add(f2, text='LED MATRIX')
         nb.add(f3, text='SOUND')
         
         # draw the tabbed pages
-        led_tab = LED_TAB(f1,tx_queue)
-        timeline_tab = Timeline_TAB(f2, tx_queue)
+        timeline_tab = Timeline_TAB(f1, tx_queue)
+        led_tab = LED_TAB(f2,tx_queue)
         sound_tab = SOUND_TAB(f3,tx_queue)
         root.mainloop()
 

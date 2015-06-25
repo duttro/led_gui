@@ -16,7 +16,8 @@ import operator # to sort the dictionary
 
 ##############
 ## my classes
-from dnd import *
+from DraggedDnd import *
+from CanvasDnd import *
 from LED_TAB import *
 
 class Assembly_TAB:
@@ -30,8 +31,8 @@ class Assembly_TAB:
         This is invoked by InitiationObject to start the drag and drop process
         """
         #Create an object to be dragged
-        ThingToDrag = Dragged()
-        #print("PASSING image file path to CANVAS DND = %s"%(CanvasDnd.image_filepath))
+        ThingToDrag = Dragged(self.selected_button_image_filepath)
+        print("InitiationObject Pressed - PASSING image file path to CANVAS DND = %s"%(CanvasDnd.image_filepath))
         #Pass the object to be dragged and the event to Tkdnd
         Tkdnd.dnd_start(ThingToDrag,Event)
 
