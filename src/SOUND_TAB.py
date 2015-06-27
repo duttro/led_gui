@@ -6,6 +6,7 @@
 ## 060315 changing the way the sounds are handled, just playing wave files
 ## 060813 added load and play buttons, 
 ## 060813 added creation of sound.GIF files for dnd on timeline
+## 062515 improved makeGif, now file name is in the box
 
 import os.path
 import struct
@@ -23,6 +24,7 @@ import threading
 import Queue
 
 from PIL import Image, ImageDraw, ImageFont
+import textwrap
 #font = ImageFont.load("arial.pil")
 font = ImageFont.truetype("arial.ttf", 15)
 
@@ -99,7 +101,7 @@ class SOUND_TAB:
           windows_path = file_path.split('/');
           path_depth = len(windows_path);
           self.arduino_path = "/sounds/" + windows_path[path_depth-1];
-          self.make_GIF_fromSound(file_path)
+          self.make_GIF_fromSoundPath(file_path)
           
           f0 = open(file_path, "rb").read();
           print"SOUND_TAB: Sound:File windows_path: FOUND DAT FILE %s" % (file_path);
@@ -174,14 +176,26 @@ class SOUND_TAB:
           msg = buffer(b"SpP3");
           self.q.put(msg); # send array          
     
-    def make_GIF_fromSound(self,filename):
+    def make_GIF_fromSoundPath(self,filename):
+        print filename
+        filename_split = filename.split('/');
+        depth = len(filename_split);
+        label = "/sounds/" + filename_split[depth-1];
+        
         # create a empty box 100 x 100
-        img = Image.new('RGB',(1000, 100))
+        MAX_W, MAX_H = 100, 100
+        img = Image.new('RGB',(MAX_W, MAX_H), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
-        draw.rectangle((0, 0, 101,101), fill=(255,255,255))
+        #draw.rectangle((0, 0, 101,101), fill=(255,255,255))
         
         # write the sound filename in the box
-        draw.text ( (10,10), filename, font=font, fill="red" )
+        #draw.text ( (10,10), para, font=font, fill="red" )
+        para = textwrap.wrap(label, width=10)
+        current_h, pad = 00, 10
+        for line in para:
+          w, h = draw.textsize(line, font=font)
+          draw.text(((MAX_W - w) / 2, current_h), line, font=font)
+          current_h += h + pad
 
         # save the gif file
         img.save(filename.replace('.wav', '.GIF'), 'GIF', transparency=0)

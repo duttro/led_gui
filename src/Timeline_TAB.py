@@ -33,6 +33,8 @@ class Timeline_TAB:
         """
         #Create an object to be dragged
         ThingToDrag = Dragged(self.selected_button_image_filepath)
+        print"... the ThingToDrag is";
+        print ThingToDrag
         #print("PASSING image file path to CANVAS DND = %s"%(CanvasDnd.image_filepath))
         #Pass the object to be dragged and the event to Tkdnd
         Tkdnd.dnd_start(ThingToDrag,Event)
@@ -57,8 +59,8 @@ class Timeline_TAB:
         if len(sorted_ObjectDict) > 0:
             for Name,Object in sorted_ObjectDict:
                 #for obj in Object:
-                print Object[2]
-                array = get_bytes_from_file(self,Object[2])
+                print Object[0].image_filepath
+                array = get_bytes_from_file(self,Object[0].image_filepath)
                 send_array_as_bin(self,array)
         else:
             print "    <empty>" 
@@ -85,10 +87,6 @@ class Timeline_TAB:
     
       def get_image_filepath():
         self.selected_button_image_filepath = tkFileDialog.askopenfilename(initialdir=('../led_data_files/'),filetypes=[("Image Files","*.gif"),("GIF",'*.gif')] )
-        ###Dragged.image_filepath   = self.selected_button_image_filepath
-        ###CanvasDnd.image_filepath = self.selected_button_image_filepath
-        ###print("Timeline_TAB sent Dragged   image file path = %s"%(Dragged.image_filepath))
-        ###print("Timeline_TAB sent CanvasDnd image file path = %s"%(CanvasDnd.image_filepath))
         
         
       #Create a button to "select buttons image" file 
@@ -109,7 +107,7 @@ class Timeline_TAB:
       transmit_CanvasButtons = Tkinter.Button(win,text='Animate Canvas 1',command=ShowObjectDicts_top_canvas)
       transmit_CanvasButtons.pack()
       ##
-      TargetWidget_TargetObject = CanvasDnd(win,relief=RAISED,bd=2)
+      TargetWidget_TargetObject = CanvasDnd(win,relief=RAISED,bd=2) 
       TargetWidget_TargetObject.pack(fill = X)
       #############################################################################################
       transmit_CanvasButtons = Tkinter.Button(win,text='Animate Canvas 2',command=ShowObjectDicts_middle_canvas)

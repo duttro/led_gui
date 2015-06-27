@@ -36,6 +36,11 @@
 ## 031814 changed class name to TIMELINE
 ## 032815 added SOUND_TAB to access wav files
 ## 062415 fixed dnd in DraggedDnd.py
+## 062615 Now the file path is now stored in the object, it can be access by using the object identifier
+## 062615 the object variables and listed in the DraggedDnd.py file
+## 062615 The dictionary now only stores a name and the xy coord of the object
+## 062615 Everything is working
+
 
 
 import pdb

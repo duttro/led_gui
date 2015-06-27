@@ -91,8 +91,7 @@ class CanvasDnd(Canvas):
         #    this canvas, either because they have been dropped there or because
         #    they are in mid-drag and are over this canvas.
         self.ObjectDict = {}
-        
-        self.__image_filepath = None
+
        
     #----- TargetWidget functionality -----
     
@@ -119,10 +118,10 @@ class CanvasDnd(Canvas):
         Source.Appear(self,XY)
         ####################################3
         # reference the Dragged class
-        #self.ObjectDict is a dictionary of drag-able object which are currently on
+        # self.ObjectDict is a dictionary of drag-able object which are currently on
         #    this canvas, either because they have been dropped there or because
         #    they are in mid-drag and are over this canvas.
-        self.ObjectDict[Source.Name] = (Source,XY,"abc") #self.__image_filepath)
+        self.ObjectDict[Source.Name] = (Source,XY)
 
           
     def dnd_motion(self,Source,Event): 
@@ -136,7 +135,7 @@ class CanvasDnd(Canvas):
         #    new mouse pointer location.
         Source.Move(XY)
         # update the coords
-        self.ObjectDict[Source.Name] = (Source,XY,"abc") #self.__image_filepath)
+        self.ObjectDict[Source.Name] = (Source,XY)
           
         
     def dnd_leave(self,Source,Event):
@@ -167,7 +166,9 @@ class CanvasDnd(Canvas):
         print Comment
         if len(self.ObjectDict) > 0:
             for Name,Object in self.ObjectDict.items():
-                print '    %s %s '%(Name,Object)
+                # print the image_filepath stored in the button object
+                print '    %s %s  %s'%(Name,Object,Object[0].image_filepath)
+
         else:
             print "    <empty>" 
 

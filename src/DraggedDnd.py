@@ -17,7 +17,7 @@ This code demonstrates a real-world drag and drop.
 #    2 Displays all messages
 #    1 Displays all but dnd_accept and dnd_motion messages
 #    0 Displays no messages
-Verbosity = 2
+Verbosity = 0
 
 #When you drag an existing object on a canvas, we normally make the original
 #    Button into an invisible phantom, and what you are ACTUALLY dragging is
@@ -94,16 +94,16 @@ class Dragged(object):
     def __init__(self,button_image_filepath):
         Blab(1, "Dragged Constructor: An instance of Dragged has been created")
         #Created when we are not on any canvas
-        self.__image_filepath = button_image_filepath;
-        self.image = Tkinter.PhotoImage(file = self.__image_filepath) #load the button image
+        self.image_filepath = button_image_filepath;
+        self.image = Tkinter.PhotoImage(file = self.image_filepath) #load the button image
         self.Canvas = None
         self.OriginalCanvas = None
         self.OriginalText = '';
         #This sets where the mouse cursor will be with respect to our Button
         self.OffsetX = 20
         self.OffsetY = 10
-        #Assign ourselves a unique number
-                
+        
+        #Assign ourselves a unique number     
         self.Number = Dragged.NextNumber
         Dragged.NextNumber += 1
         #Use the number to build our name
