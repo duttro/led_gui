@@ -34,6 +34,27 @@ import Tkinter, tkFileDialog, Dialog
 from PIL import Image, ImageDraw
 from CanvasDnd import *
 
+import ctypes
+from ctypes import wintypes
+_GetShortPathNameW = ctypes.windll.kernel32.GetShortPathNameW
+_GetShortPathNameW.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
+_GetShortPathNameW.restype = wintypes.DWORD
+#GetShortPathName is used by first calling it without a destination buffer. It will return the number of characters you need to make the destination buffer. You then call it again with a buffer of that size. If, due to a TOCTTOU problem, the return value is still larger, keep trying until you've got it right. So:
+
+def get_short_path_name(long_name):
+    """
+    Gets the short path name of a given long path.
+    http://stackoverflow.com/a/23598461/200291
+    """
+    output_buf_size = 0
+    while True:
+        output_buf = ctypes.create_unicode_buffer(output_buf_size)
+        needed = _GetShortPathNameW(long_name, output_buf, output_buf_size)
+        if output_buf_size >= needed:
+            return output_buf.value
+        else:
+            output_buf_size = needed
+
 def MouseInWidget(Widget,Event):
     """
     Figure out where the cursor is with respect to a widget.
@@ -95,6 +116,9 @@ class Dragged(object):
         Blab(1, "Dragged Constructor: An instance of Dragged has been created")
         #Created when we are not on any canvas
         self.image_filepath = button_image_filepath;
+        print("constructor long path = %s" % (self.image_filepath))
+        self.short_image_filepath = get_short_path_name(self.image_filepath)
+        print("constructor short path = %s" % (self.short_image_filepath))
         self.image = Tkinter.PhotoImage(file = self.image_filepath) #load the button image
         self.Canvas = None
         self.OriginalCanvas = None

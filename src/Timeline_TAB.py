@@ -1,10 +1,11 @@
 ## 021715 class Assembly_TAB moved to it's own file Assembly_TAB.py
-## 021915 added def ShowObjectDicts_top_canvas for transmitting sending all object on canvas
+## 021915 added def   for transmitting sending all object on canvas
 ## 021915 added def ShowObjectDicts_middle_canvas for transmitting sending all object on canvas
 ## 021915 added def ShowObjectDicts_bottom_canvas for transmitting sending all object on canvas
 ## 021915 new defs in Assemblt_TAB not working yet
 ## 030715 assembly_tab animate canvas 1 works
 ## 031814 changed class name to TIMELINE
+## 062915 Timeline_TAB.py added a incrementing cursor that sweeps across canvas 1
 
 
 
@@ -14,6 +15,7 @@ import Tkinter
 import Tkinter, tkFileDialog, Dialog
 import Queue
 import operator # to sort the dictionary
+import time
 
 ##############
 ## my classes
@@ -39,6 +41,29 @@ class Timeline_TAB:
         #Pass the object to be dragged and the event to Tkdnd
         Tkdnd.dnd_start(ThingToDrag,Event)
 
+      def animate_canvas():
+        y_top    = 0;
+        y_bottom = 250;
+        ShowObjectDicts_top_canvas()
+        TargetWidget_TargetObject.create_line( 0, y_top , 0, y_bottom , fill ="red", tags="cursor_1" );
+        TargetWidget_TargetObject.tag_raise("cursor_1")
+        TargetWidget_TargetObject.update()
+        
+        for marker1_x in range(0 , 800):
+          #print marker1_x
+          TargetWidget_TargetObject.coords("cursor_1",(marker1_x,y_top,marker1_x,y_bottom))
+          TargetWidget_TargetObject.tag_raise("cursor_1")
+          TargetWidget_TargetObject.update()
+          time.sleep(0.025)
+          
+      
+      
+      
+      
+      
+      
+      
+      
       def ShowObjectDicts_top_canvas():
         ##TargetWidget_TargetObject.ShowObjectDict('TopCanvas')
         ## list object on the top canvas listed in the dictionary     
@@ -60,8 +85,8 @@ class Timeline_TAB:
             for Name,Object in sorted_ObjectDict:
                 #for obj in Object:
                 print Object[0].image_filepath
-                array = get_bytes_from_file(self,Object[0].image_filepath)
-                send_array_as_bin(self,array)
+                #array = get_bytes_from_file(self,Object[0].image_filepath)
+                #send_array_as_bin(self,array)
         else:
             print "    <empty>" 
         
@@ -104,7 +129,7 @@ class Timeline_TAB:
       #Create canvases to act as the Target Widgets for the drag and drop. Note that
       #    these canvases will act as both the TargetWidget AND the TargetObject.
       #############################################################################################
-      transmit_CanvasButtons = Tkinter.Button(win,text='Animate Canvas 1',command=ShowObjectDicts_top_canvas)
+      transmit_CanvasButtons = Tkinter.Button(win,text='Animate Canvas 1',command=animate_canvas)
       transmit_CanvasButtons.pack()
       ##
       TargetWidget_TargetObject = CanvasDnd(win,relief=RAISED,bd=2) 
