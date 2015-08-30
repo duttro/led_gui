@@ -40,7 +40,13 @@
 ## 062615 the object variables and listed in the DraggedDnd.py file
 ## 062615 The dictionary now only stores a name and the xy coord of the object
 ## 062615 Everything is working
-
+## 072815 added second Q and renamed Q=Q1; Q1=animate canvas1; Q2=animate canvas2;
+## 072915 canvas1 transmits to 192.168.1.177 and canvas2 transmits to 192.168.1.178
+## 080715 now commands/data is now sent to a separate UDP port stored in the DAT file for each display type
+## 080715 all commands are a uniform size (4) in characters, if unused pad with decimal pts
+## 081415 each device now has a unique IP address now stored in Timeline_TAB class
+## 081615 problem with multiple units attached; when multiple units attached each device must have a unique MAX address
+## 082515 long file names now work for sound
 
 
 import pdb
@@ -69,55 +75,95 @@ from LED_TAB import *
 from SOUND_TAB import *
 from Timeline_TAB import *
 
-
-
-
-
 # Create the queue
-tx_queue = Queue.Queue( )
+tx_queue1a = Queue.Queue()
+tx_queue2a = Queue.Queue()
+tx_queue1b = Queue.Queue()
+tx_queue2b = Queue.Queue()
 
 class Serial:
      
-    def __init__(self,tx_queue):
+    def __init__(self, tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b, timeline_class):
         ############################################################
         self._go_attribute = 1
         print"Commands sent over ether...";
-        UDP_IP = "192.168.1.177"
-        UDP_PORT = 88
-        print "UDP target IP:", UDP_IP
-        print "UDP target port:", UDP_PORT
-        sock = socket.socket(socket.AF_INET, # Internet
-             socket.SOCK_DGRAM) # UDP
+        print("Always using port 80 for all COMS");
+        print("Using address %s\n" % (timeline_class.E1a_v.get()));
+        print("Using address %s\n" % (timeline_class.E1b_v.get()));
+        print("Using address %s\n" % (timeline_class.E2a_v.get()));
+        print("Using address %s\n" % (timeline_class.E2b_v.get()));
+        
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Internet, UDP
+        
         idle_counter = 0
         heartbeat_count = 0
         print"idle counter set to 0"
         
         while (self.go_attribute):   
-
-            while tx_queue.qsize(  ):
-              
+            #####################################################################
+            while tx_queue1a.qsize(  ):
               try:
-                 #self.master = master
-                 TXmsg = tx_queue.get( )
-                 #print "LED_GUI: sending msg %s" % (TXmsg)
-                 sock.sendto(TXmsg, (UDP_IP, UDP_PORT))
+                 TXmsg1a = tx_queue1a.get( )
+                 print ("LED_GUI: %s ; port= %s CMD= %s sending msg1a \n"%(timeline_class.E1a_v.get(),"80",TXmsg1a[2:6]));
+                 sock.sendto(TXmsg1a[2:], (timeline_class.E1a_v.get(), 80 ))
               except Queue.Empty:
                  # just on general principles, although we don't
                  # expect this branch to be taken in this case
                  pass
-
+            ######################################################################
+            while tx_queue1b.qsize(  ):
+              try:
+                 TXmsg1b = tx_queue1b.get( )
+                 print ("LED_GUI: %s ; port= %s CMD= %s sending msg1b \n"%(timeline_class.E1b_v.get(),"80",TXmsg1b[2:6]));
+                 sock.sendto(TXmsg1b[2:], (timeline_class.E1b_v.get(), 80 ))
+              except Queue.Empty:
+                 # just on general principles, although we don't
+                 # expect this branch to be taken in this case
+                 pass
+            ######################################################################
+            while tx_queue2a.qsize(  ):
+              try:
+                 TXmsg2a = tx_queue2a.get( )
+                 print ("LED_GUI: %s ; port= %s CMD= %s sending msg2a \n"%(timeline_class.E2a_v.get(),"80",TXmsg2a[2:6]));
+                 sock.sendto(TXmsg2a[2:], (timeline_class.E2a_v.get(), 80 ))
+              except Queue.Empty:
+                 # just on general principles, although we don't
+                 # expect this branch to be taken in this case
+                 pass
+            ######################################################################
+            while tx_queue2b.qsize(  ):
+              try:
+                 TXmsg2b = tx_queue2b.get( )
+                 print ("LED_GUI: %s ; port= %s CMD= %s sending msg2b \n"%(timeline_class.E2b_v.get(),"80",TXmsg2b[2:6]));
+                 sock.sendto(TXmsg2b[2:], (timeline_class.E2b_v.get(), 80 ))
+              except Queue.Empty:
+                 # just on general principles, although we don't
+                 # expect this branch to be taken in this case
+                 pass
+            ######################################################################     
             time.sleep(.01)
             if idle_counter < 2000:
                idle_counter = idle_counter +1
             else:
                idle_counter = 0
-
-            #if idle_counter == 2000:
-               heartbeat_count = heartbeat_count +1
-               TXmsg = "Hb"
-               print"sending HeartBeat message " + TXmsg
-               sock.sendto(TXmsg, (UDP_IP, UDP_PORT))
-
+               
+               # transmit the heartbeat counter
+               if heartbeat_count == 99:
+                  heartbeat_count = 00
+               else:   
+                  heartbeat_count = heartbeat_count +1
+                  
+               # TX message
+               HBmsg80 = '80Hb'+'{:02d}'.format(heartbeat_count);
+               # IP address Q1a
+               # IP address Q1b
+               # IP address Q2a
+               # IP address Q2b
+               print ("LED_GUI: %s %s %s %s; port= %s CMD= %s  \n"%(timeline_class.E1a_v.get(),timeline_class.E1b_v.get(),timeline_class.E2a_v.get(),timeline_class.E2b_v.get(),HBmsg80[0:2],HBmsg80[2:6]));
+               sock.sendto(HBmsg80[2:], (timeline_class.E1a_v.get(), int(HBmsg80[0:2])));
+               sock.sendto(HBmsg80[2:], (timeline_class.E1b_v.get(), int(HBmsg80[0:2])));
+               sock.sendto(HBmsg80[2:], (timeline_class.E2a_v.get(), int(HBmsg80[0:2])));
+               sock.sendto(HBmsg80[2:], (timeline_class.E2b_v.get(), int(HBmsg80[0:2])));
 
               
     @property
@@ -141,37 +187,10 @@ def main():
             Serial.go_attribute = 0
             win.destroy()
         
-    # start the queue thread
-        serThread1 = threading.Thread(target=Serial, args=(tx_queue,))
-        serThread1.start()
-
         root = Tkinter.Tk()
         # use width x height + x_offset + y_offset (no spaces!)
         #root.geometry("%dx%d+%d+%d" % (300, 200, 100, 50))
         root.title('Top View of the ttk.Notebook')
-
-##        #Tkinter.Tk.__init__(self)
-##        ####win.title('Test')
-##
-##        # make the top right close button minimize (iconify) the main window
-##        win.protocol("WM_DELETE_WINDOW", win.iconify)
-##        ###win.protocol("WM_DELETE_WINDOW", lambda e: self.kill_it_all(win))
-##        
-##        # make Esc exit the program
-##        ###win.bind('<Escape>', lambda e: kill_it_all(win))
-##        win.bind('<Escape>', lambda e: self.kill_it_all(win))
-##
-##        # create a menu bar with an Exit command
-##        menubar = Tkinter.Menu(win)
-##        filemenu = Tkinter.Menu(menubar, tearoff=0)
-##        filemenu.add_command(label="Exit", command=win.destroy)
-##        menubar.add_cascade(label="File", menu=filemenu)
-##        win.config(menu=menubar)
-
-##        # create a Text widget with a Scrollbar attached
-##        txt = ScrolledText(win, undo=True)
-##        txt['font'] = ('consolas', '12')
-##        image_filepath=''
         
         nb = ttk.Notebook(root)
         nb.pack(fill='both', expand='yes')
@@ -187,9 +206,15 @@ def main():
         nb.add(f3, text='SOUND')
         
         # draw the tabbed pages
-        timeline_tab = Timeline_TAB(f1, tx_queue)
-        led_tab = LED_TAB(f2,tx_queue)
-        sound_tab = SOUND_TAB(f3,tx_queue)
+        timeline_tab = Timeline_TAB(f1, tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b)
+        led_tab      =      LED_TAB(f2, tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b)
+        sound_tab    =    SOUND_TAB(f3, tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b)
+        
+        # start the queue thread
+        serThread1 = threading.Thread(target=Serial, args=(tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b, timeline_tab,))
+        serThread1.start()
+        
+        
         root.mainloop()
 
 if __name__ == "__main__":

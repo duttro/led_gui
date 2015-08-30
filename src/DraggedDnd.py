@@ -32,28 +32,22 @@ from Tkinter import *
 import Tkdnd
 import Tkinter, tkFileDialog, Dialog
 from PIL import Image, ImageDraw
+from DraggedDnd import *
 from CanvasDnd import *
 
-import ctypes
-from ctypes import wintypes
-_GetShortPathNameW = ctypes.windll.kernel32.GetShortPathNameW
-_GetShortPathNameW.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
-_GetShortPathNameW.restype = wintypes.DWORD
-#GetShortPathName is used by first calling it without a destination buffer. It will return the number of characters you need to make the destination buffer. You then call it again with a buffer of that size. If, due to a TOCTTOU problem, the return value is still larger, keep trying until you've got it right. So:
 
-def get_short_path_name(long_name):
-    """
-    Gets the short path name of a given long path.
-    http://stackoverflow.com/a/23598461/200291
-    """
-    output_buf_size = 0
-    while True:
-        output_buf = ctypes.create_unicode_buffer(output_buf_size)
-        needed = _GetShortPathNameW(long_name, output_buf, output_buf_size)
-        if output_buf_size >= needed:
-            return output_buf.value
-        else:
-            output_buf_size = needed
+# List of coordinates to draw squares in the GIF file
+box_coord_vh = [[0 for x in xrange(8)] for x in xrange(8)]
+box_coord_vh = [\
+               ( 4, 4,12,12),(16, 4,24,12),(28, 4,36,12),(40, 4,48,12),(52, 4,60,12),(64, 4,72,12),(76, 4,84,12),(88, 4,96,12),\
+               ( 4,16,12,24),(16,16,24,24),(28,16,36,24),(40,16,48,24),(52,16,60,24),(64,16,72,24),(76,16,84,24),(88,16,96,24),\
+               ( 4,28,12,36),(16,28,24,36),(28,28,36,36),(40,28,48,36),(52,28,60,36),(64,28,72,36),(76,28,84,36),(88,28,96,36),\
+               ( 4,40,12,48),(16,40,24,48),(28,40,36,48),(40,40,48,48),(52,40,60,48),(64,40,72,48),(76,40,84,48),(88,40,96,48),\
+               ( 4,52,12,60),(16,52,24,60),(28,52,36,60),(40,52,48,60),(52,52,60,60),(64,52,72,60),(76,52,84,60),(88,52,96,60),\
+               ( 4,64,12,72),(16,64,24,72),(28,64,36,72),(40,64,48,72),(52,64,60,72),(64,64,72,72),(76,64,84,72),(88,64,96,72),\
+               ( 4,76,12,84),(16,76,24,84),(28,76,36,84),(40,76,48,84),(52,76,60,84),(64,76,72,84),(76,76,84,84),(88,76,96,84),\
+               ( 4,88,12,96),(16,88,24,96),(28,88,36,96),(40,88,48,96),(52,88,60,96),(64,88,72,96),(76,88,84,96),(88,88,96,96)]
+            
 
 def MouseInWidget(Widget,Event):
     """
@@ -98,7 +92,40 @@ def Blab(Level,Message):
     """
     if Verbosity > Level:
         print Message
-    
+        
+       
+        
+        
+def get_bytes_from_file(self,filename):  
+        tempBuffer = bytearray()
+        try:
+          #operation_that_can_throw_ioerror()
+          f = open(filename.lower().replace('.gif','.DAT'), "rb").read()
+          print"get_bytes_from_file: FOUND DAT FILE %s" % (filename.lower().replace('.gif','.DAT'))
+          print"the length of file is %i" % (len(f))
+          for line in f:
+            #print line.encode('hex')
+            tempBuffer.append(line)
+          return tempBuffer
+        except IOError:
+        #handle_the_exception_somehow()
+        # if the .dat file doesn't exist use .gif file as source 
+          print"get_bytes_from_file: ERROR NO DAT FILE, using GIF %s" % (filename)
+          img = Image.open(filename)
+          rgb_pix = img.convert('RGB')
+          ledColorMatrix = [['#ffffff' for x in xrange(8)] for x in xrange(8)]
+          for s in box_coord_vh:
+            r,g,b = rgb_pix.getpixel((s[3]-4,s[2]-4)) # center of each box
+            hexstring = ('#%02X%02X%02X'%(r,g,b))
+            ledColorMatrix[(s[3]/12)-1][(s[2]/12)-1] =  hexstring
+            tempBuffer.append(r)
+            tempBuffer.append(g)
+            tempBuffer.append(b)
+          #print"get_bytes_from_file: tempBuffer"
+          #print tempBuffer
+          return tempBuffer 
+          
+          
 class Dragged(object):
     """
     This is a prototype thing to be dragged and dropped.
@@ -117,8 +144,9 @@ class Dragged(object):
         #Created when we are not on any canvas
         self.image_filepath = button_image_filepath;
         print("constructor long path = %s" % (self.image_filepath))
-        self.short_image_filepath = get_short_path_name(self.image_filepath)
-        print("constructor short path = %s" % (self.short_image_filepath))
+        self.dat_array = get_bytes_from_file(self,self.image_filepath)
+        print("DAT_ARRAY from object is %s\n"%(self.dat_array[0:6]));
+        ########################################################################################
         self.image = Tkinter.PhotoImage(file = self.image_filepath) #load the button image
         self.Canvas = None
         self.OriginalCanvas = None
@@ -184,7 +212,7 @@ class Dragged(object):
             self.OriginalCanvas = None
             self.OriginalID = None
             self.OriginalButton = None
-            print"end self.OriginalCanvas";
+            #print"end self.OriginalCanvas";
 
     def Appear(self, Canvas, XY):
         """
@@ -209,9 +237,9 @@ class Dragged(object):
         
         
         #Create a Button which identifies us, including our unique number
-        print"DraggedDnd.Appear ";
+        #print"DraggedDnd.Appear ";
         self.Button = Button(Canvas,text=self.Name,borderwidth=2, relief=RAISED, image=self.image)
-        print("Appear: button created");
+        #print("Appear: button created");
         #Display the Button on a window on the canvas. We need the ID returned by
         #    the canvas so we can move the Button around as the mouse moves.
         self.ID = Canvas.create_window(self.X-self.OffsetX, self.Y-self.OffsetY, window=self.Button, anchor="nw")
@@ -339,7 +367,7 @@ class Dragged(object):
         self.Button = None
         #Ask Tkdnd to start the drag operation
         if Tkdnd.dnd_start(self,Event):
-          print"Tkdnd.dnd_start(self,Event)";
+          #print"Tkdnd.dnd_start(self,Event)";
           #Save where the mouse pointer was in the Button so it stays in the
           #    same relative position as we drag it around
           self.OffsetX, self.OffsetY = MouseInWidget(self.OriginalButton,Event)

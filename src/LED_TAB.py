@@ -1,5 +1,6 @@
 ## 021715 class LED_TAB moved into file LED_TAB.py
 ## 030115 updated file references to support new file structure, added initialdir=('../led_data_files/'),
+## 080115 LED matrix commands will use ether port 80
 
 
 
@@ -30,9 +31,22 @@ from LED_TAB import *
 from Timeline_TAB import *
 
 
-class LED_TAB:
-          
-    def __init__(self,win, tx_queue):
+class LED_TAB(object):
+    # List of coordinates to draw squares in the GIF file
+    box_coord_vh = [[0 for x in xrange(8)] for x in xrange(8)]
+    box_coord_vh = [\
+                   ( 4, 4,12,12),(16, 4,24,12),(28, 4,36,12),(40, 4,48,12),(52, 4,60,12),(64, 4,72,12),(76, 4,84,12),(88, 4,96,12),\
+                   ( 4,16,12,24),(16,16,24,24),(28,16,36,24),(40,16,48,24),(52,16,60,24),(64,16,72,24),(76,16,84,24),(88,16,96,24),\
+                   ( 4,28,12,36),(16,28,24,36),(28,28,36,36),(40,28,48,36),(52,28,60,36),(64,28,72,36),(76,28,84,36),(88,28,96,36),\
+                   ( 4,40,12,48),(16,40,24,48),(28,40,36,48),(40,40,48,48),(52,40,60,48),(64,40,72,48),(76,40,84,48),(88,40,96,48),\
+                   ( 4,52,12,60),(16,52,24,60),(28,52,36,60),(40,52,48,60),(52,52,60,60),(64,52,72,60),(76,52,84,60),(88,52,96,60),\
+                   ( 4,64,12,72),(16,64,24,72),(28,64,36,72),(40,64,48,72),(52,64,60,72),(64,64,72,72),(76,64,84,72),(88,64,96,72),\
+                   ( 4,76,12,84),(16,76,24,84),(28,76,36,84),(40,76,48,84),(52,76,60,84),(64,76,72,84),(76,76,84,84),(88,76,96,84),\
+                   ( 4,88,12,96),(16,88,24,96),(28,88,36,96),(40,88,48,96),(52,88,60,96),(64,88,72,96),(76,88,84,96),(88,88,96,96)]
+            
+
+    
+    def __init__(self,win, tx_queue1a, tx_queue1b, tx_queue2a, tx_queue2b):
 
         
 ##        #Tkinter.Tk.__init__(self)
@@ -78,23 +92,15 @@ class LED_TAB:
         self.color7 = '#ffffff'
         self.selected_color = '#ffffff'
     
-        self.q = tx_queue
-
+        self.q1 = tx_queue1a
+        self.q2 = tx_queue1b
+        self.q3 = tx_queue2a
+        self.q4 = tx_queue2b
+        
         self.myFormats = [
           ('CompuServer GIF','*.gif'),
           ]
 
-        # List of coordinates to draw squares in the GIF file
-        self.box_coord_vh = [[0 for x in xrange(8)] for x in xrange(8)]
-        self.box_coord_vh = [\
-                          ( 4, 4,12,12),(16, 4,24,12),(28, 4,36,12),(40, 4,48,12),(52, 4,60,12),(64, 4,72,12),(76, 4,84,12),(88, 4,96,12),\
-                          ( 4,16,12,24),(16,16,24,24),(28,16,36,24),(40,16,48,24),(52,16,60,24),(64,16,72,24),(76,16,84,24),(88,16,96,24),\
-                          ( 4,28,12,36),(16,28,24,36),(28,28,36,36),(40,28,48,36),(52,28,60,36),(64,28,72,36),(76,28,84,36),(88,28,96,36),\
-                          ( 4,40,12,48),(16,40,24,48),(28,40,36,48),(40,40,48,48),(52,40,60,48),(64,40,72,48),(76,40,84,48),(88,40,96,48),\
-                          ( 4,52,12,60),(16,52,24,60),(28,52,36,60),(40,52,48,60),(52,52,60,60),(64,52,72,60),(76,52,84,60),(88,52,96,60),\
-                          ( 4,64,12,72),(16,64,24,72),(28,64,36,72),(40,64,48,72),(52,64,60,72),(64,64,72,72),(76,64,84,72),(88,64,96,72),\
-                          ( 4,76,12,84),(16,76,24,84),(28,76,36,84),(40,76,48,84),(52,76,60,84),(64,76,72,84),(76,76,84,84),(88,76,96,84),\
-                          ( 4,88,12,96),(16,88,24,96),(28,88,36,96),(40,88,48,96),(52,88,60,96),(64,88,72,96),(76,88,84,96),(88,88,96,96)]
         
         self.bigMatrix = self.clear_colorArray()
         
@@ -674,356 +680,356 @@ class LED_TAB:
     def cb_led00(self):
         self.button_LED00.configure(bg = self.selected_color)
         self.bigMatrix [0][0] = self.selected_color
-        setLED = "As0000%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0000%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led01(self):
         self.button_LED01.configure(bg = self.selected_color)
         self.bigMatrix [0][1] = self.selected_color
-        setLED = "As0001%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0001%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led02(self):
         self.button_LED02.configure(bg = self.selected_color)
         self.bigMatrix [0][2] = self.selected_color
-        setLED = "As0002%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0002%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led03(self):
         self.button_LED03.configure(bg = self.selected_color)
         self.bigMatrix [0][3] = self.selected_color
-        setLED = "As0003%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0003%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led04(self):
         self.button_LED04.configure(bg = self.selected_color)
         self.bigMatrix [0][4] = self.selected_color
-        setLED = "As0004%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0004%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led05(self):
         self.button_LED05.configure(bg = self.selected_color)
         self.bigMatrix [0][5] = self.selected_color
-        setLED = "As0005%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0005%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led06(self):
         self.button_LED06.configure(bg = self.selected_color)
         self.bigMatrix [0][6] = self.selected_color
-        setLED = "As0006%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0006%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led07(self):
         self.button_LED07.configure(bg = self.selected_color)
         self.bigMatrix [0][7] = self.selected_color
-        setLED = "As0007%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0007%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_led10(self):
         self.button_LED10.configure(bg = self.selected_color)
         self.bigMatrix [1][0] = self.selected_color
-        setLED = "As0100%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0100%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led11(self):
         self.button_LED11.configure(bg = self.selected_color)
         self.bigMatrix [1][1] = self.selected_color
-        setLED = "As0101%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0101%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led12(self):
         self.button_LED12.configure(bg = self.selected_color)
         self.bigMatrix [1][2] = self.selected_color
-        setLED = "As0102%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0102%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led13(self):
         self.button_LED13.configure(bg = self.selected_color)
         self.bigMatrix [1][3] = self.selected_color
-        setLED = "As0103%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0103%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led14(self):
         self.button_LED14.configure(bg = self.selected_color)
         self.bigMatrix [1][4] = self.selected_color
-        setLED = "As0104%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0104%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led15(self):
         self.button_LED15.configure(bg = self.selected_color)
         self.bigMatrix [1][5] = self.selected_color
-        setLED = "As0105%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0105%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led16(self):
         self.button_LED16.configure(bg = self.selected_color)
         self.bigMatrix [1][6] = self.selected_color
-        setLED = "As0106%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0106%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led17(self):
         self.button_LED17.configure(bg = self.selected_color)
         self.bigMatrix [1][7] = self.selected_color
-        setLED = "As0107%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0107%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_led20(self):
         self.button_LED20.configure(bg = self.selected_color)
         self.bigMatrix [2][0] = self.selected_color
-        setLED = "As0200%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0200%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led21(self):
         self.button_LED21.configure(bg = self.selected_color)
         self.bigMatrix [2][1] = self.selected_color
-        setLED = "As0201%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0201%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led22(self):
         self.button_LED22.configure(bg = self.selected_color)
         self.bigMatrix [2][2] = self.selected_color
-        setLED = "As0202%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0202%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led23(self):
         self.button_LED23.configure(bg = self.selected_color)
         self.bigMatrix [2][3] = self.selected_color
-        setLED = "As0203%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0203%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led24(self):
         self.button_LED24.configure(bg = self.selected_color)
         self.bigMatrix [2][4] = self.selected_color
-        setLED = "As0204%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0204%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led25(self):
         self.button_LED25.configure(bg = self.selected_color)
         self.bigMatrix [2][5] = self.selected_color
-        setLED = "As0205%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0205%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led26(self):
         self.button_LED26.configure(bg = self.selected_color)
         self.bigMatrix [2][6] = self.selected_color
-        setLED = "As0206%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0206%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led27(self):
         self.button_LED27.configure(bg = self.selected_color)
         self.bigMatrix [2][7] = self.selected_color
-        setLED = "As0207%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0207%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_led30(self):
         self.button_LED30.configure(bg = self.selected_color)
         self.bigMatrix [3][0] = self.selected_color
-        setLED = "As0300%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0300%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led31(self):
         self.button_LED31.configure(bg = self.selected_color)
         self.bigMatrix [3][1] = self.selected_color
-        setLED = "As0301%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0301%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led32(self):
         self.button_LED32.configure(bg = self.selected_color)
         self.bigMatrix [3][2] = self.selected_color
-        setLED = "As0302%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0302%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led33(self):
         self.button_LED33.configure(bg = self.selected_color)
         self.bigMatrix [3][3] = self.selected_color
-        setLED = "As0303%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0303%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led34(self):
         self.button_LED34.configure(bg = self.selected_color)
         self.bigMatrix [3][4] = self.selected_color
-        setLED = "As0304%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0304%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led35(self):
         self.button_LED35.configure(bg = self.selected_color)
         self.bigMatrix [3][5] = self.selected_color
-        setLED = "As0305%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0305%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led36(self):
         self.button_LED36.configure(bg = self.selected_color)
         self.bigMatrix [3][6] = self.selected_color
-        setLED = "As0306%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0306%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led37(self):
         self.button_LED37.configure(bg = self.selected_color)
         self.bigMatrix [3][7] = self.selected_color
-        setLED = "As0307%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0307%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_led40(self):
         self.button_LED40.configure(bg = self.selected_color)
         self.bigMatrix [4][0] = self.selected_color
-        setLED = "As0400%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0400%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led41(self):
         self.button_LED41.configure(bg = self.selected_color)
         self.bigMatrix [4][1] = self.selected_color
-        setLED = "As0401%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0401%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led42(self):
         self.button_LED42.configure(bg = self.selected_color)
         self.bigMatrix [4][2] = self.selected_color
-        setLED = "As0402%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0402%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led43(self):
         self.button_LED43.configure(bg = self.selected_color)
         self.bigMatrix [4][3] = self.selected_color
-        setLED = "As0403%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0403%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led44(self):
         self.button_LED44.configure(bg = self.selected_color)
         self.bigMatrix [4][4] = self.selected_color
-        setLED = "As0404%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0404%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led45(self):
         self.button_LED45.configure(bg = self.selected_color)
         self.bigMatrix [4][5] = self.selected_color
-        setLED = "As0405%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0405%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led46(self):
         self.button_LED46.configure(bg = self.selected_color)
         self.bigMatrix [4][6] = self.selected_color
-        setLED = "As0406%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0406%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led47(self):
         self.button_LED47.configure(bg = self.selected_color)
         self.bigMatrix [4][7] = self.selected_color
-        setLED = "As0407%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0407%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_led50(self):
         self.button_LED50.configure(bg = self.selected_color)
         self.bigMatrix [5][0] = self.selected_color
-        setLED = "As0500%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0500%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led51(self):
         self.button_LED51.configure(bg = self.selected_color)
         self.bigMatrix [5][1] = self.selected_color
-        setLED = "As0501%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0501%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led52(self):
         self.button_LED52.configure(bg = self.selected_color)
         self.bigMatrix [5][2] = self.selected_color
-        setLED = "As0502%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0502%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led53(self):
         self.button_LED53.configure(bg = self.selected_color)
         self.bigMatrix [5][3] = self.selected_color
-        setLED = "As0503%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0503%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led54(self):
         self.button_LED54.configure(bg = self.selected_color)
         self.bigMatrix [5][4] = self.selected_color
-        setLED = "As0504%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0504%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led55(self):
         self.button_LED55.configure(bg = self.selected_color)
         self.bigMatrix [5][5] = self.selected_color
-        setLED = "As0505%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0505%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led56(self):
         self.button_LED56.configure(bg = self.selected_color)
         self.bigMatrix [5][6] = self.selected_color
-        setLED = "As0506%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0506%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led57(self):
         self.button_LED57.configure(bg = self.selected_color)
         self.bigMatrix [5][7] = self.selected_color
-        setLED = "As0507%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0507%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
     def cb_led60(self):
         self.button_LED60.configure(bg = self.selected_color)
         self.bigMatrix [6][0] = self.selected_color
-        setLED = "As0600%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0600%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led61(self):
         self.button_LED61.configure(bg = self.selected_color)
         self.bigMatrix [6][1] = self.selected_color
-        setLED = "As0601%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0601%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led62(self):
         self.button_LED62.configure(bg = self.selected_color)
         self.bigMatrix [6][2] = self.selected_color
-        setLED = "As0602%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0602%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led63(self):
         self.button_LED63.configure(bg = self.selected_color)
         self.bigMatrix [6][3] = self.selected_color
-        setLED = "As0603%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0603%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led64(self):
         self.button_LED64.configure(bg = self.selected_color)
         self.bigMatrix [6][4] = self.selected_color
-        setLED = "As0604%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0604%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led65(self):
         self.button_LED65.configure(bg = self.selected_color)
         self.bigMatrix [6][5] = self.selected_color
-        setLED = "As0605%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0605%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led66(self):
         self.button_LED66.configure(bg = self.selected_color)
         self.bigMatrix [6][6] = self.selected_color
-        setLED = "As0606%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0606%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led67(self):
         self.button_LED67.configure(bg = self.selected_color)
         self.bigMatrix [6][7] = self.selected_color
-        setLED = "As0607%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0607%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
     def cb_led70(self):
         self.button_LED70.configure(bg = self.selected_color)
         self.bigMatrix [7][0] = self.selected_color
-        setLED = "As0700%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0700%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led71(self):
         self.button_LED71.configure(bg = self.selected_color)
         self.bigMatrix [7][1] = self.selected_color
-        setLED = "As0701%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0701%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led72(self):
         self.button_LED72.configure(bg = self.selected_color)
         self.bigMatrix [7][2] = self.selected_color
-        setLED = "As0702%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0702%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led73(self):
         self.button_LED73.configure(bg = self.selected_color)
         self.bigMatrix [7][3] = self.selected_color
-        setLED = "As0703%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0703%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led74(self):
         self.button_LED74.configure(bg = self.selected_color)
         self.bigMatrix [7][4] = self.selected_color
-        setLED = "As0704%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0704%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led75(self):
         self.button_LED75.configure(bg = self.selected_color)
         self.bigMatrix [7][5] = self.selected_color
-        setLED = "As0705%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0705%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led76(self):
         self.button_LED76.configure(bg = self.selected_color)
         self.bigMatrix [7][6] = self.selected_color
-        setLED = "As0706%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0706%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
     def cb_led77(self):
         self.button_LED77.configure(bg = self.selected_color)
         self.bigMatrix [7][7] = self.selected_color
-        setLED = "As0707%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
-        self.q.put(setLED) # write a string to the serial port via tx_queue
+        setLED = "80As..0707%03i%03i%03iz" % ( int(self.selected_color[1:3],16), int(self.selected_color[3:5],16),  int(self.selected_color[5:7],16) )
+        self.q1.put(setLED) # write a string to the serial port via tx_queue1
 
 
     def cb_animate_loop(self):
       self.data_inp_1 =  self.enter_data_1.get()      # Fetch text from the box.
       print float(self.data_inp_1)
       for al in range(0,5):
-        self.q.put(self.b0)
+        self.q1.put(self.b0)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b1)
+        self.q1.put(self.b1)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b2)
+        self.q1.put(self.b2)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b3)
+        self.q1.put(self.b3)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b4)
+        self.q1.put(self.b4)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b5)
+        self.q1.put(self.b5)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b6)
+        self.q1.put(self.b6)
         time.sleep(float(self.data_inp_1))
-        self.q.put(self.b7)
+        self.q1.put(self.b7)
         time.sleep(float(self.data_inp_1))
 
     def cb_animate_canvas(self,CanvasName):   #TargetWidget_TargetObject.ShowObjectDict('TopCanvas')
@@ -1032,7 +1038,7 @@ class LED_TAB:
         if len(CanvasDnd.ObjectDict) > 0:
           for Name,Object in CanvasDnd.ObjectDict.items():
             print 'NAME: %s  ????: %s COORD %s GIF file: %s '%(Name,Object(0),Object(1),Object(2))
-            #self.q.put(load_GIF_return_as_array(self,Object(2))) ###########% load GIF 
+            #self.q1.put(load_GIF_return_as_array(self,Object(2))) ###########% load GIF 
             time.sleep(float(self.data_inp_1))
           else:
             print "    <empty>"
@@ -1045,7 +1051,7 @@ class LED_TAB:
         draw = ImageDraw.Draw(img)
         draw.rectangle((0, 0, 101,101), fill=(255,255,255))
         # fill in the 8x8 matrix
-        for s in self.box_coord_vh:
+        for s in LED_TAB.box_coord_vh:
           #print"make_GIF_fromBigMatrix coord = %16s Y=%02i, X=%02i  bigMatrix= %s" % (str(s), (s[2]/12)-1, (s[3]/12)-1, str(self.bigMatrix[(s[2]/12)-1][(s[3]/12)-1]) )
           r = int(str(self.bigMatrix[(s[2]/12)-1][(s[3]/12)-1])[1:3],16) #print"r = %i\n"% (r) # get 1st byte
           g = int(str(self.bigMatrix[(s[2]/12)-1][(s[3]/12)-1])[3:5],16) #print"g = %i\n"% (g) # get 2nd byte
@@ -1063,6 +1069,7 @@ class LED_TAB:
         new_filename = filename[:len(filename)-4:] + ".DAT"
         print("Writing DAT file %s \n" %(filename))
         Fdat = open(new_filename, "w+")
+        Fdat.write(b"80Fd.."); #Ether Port 80 + Command to LED Display
         Fdat.write(matrix);
          #Close opened file
         Fdat.close()  
@@ -1072,11 +1079,13 @@ class LED_TAB:
         tempBuffer = bytearray()
         try:
           #operation_that_can_throw_ioerror()
-          f = open(filename, "rb").read()
+          f = open(filename, "rb");
           print"get_bytes_from_file: FOUND DAT FILE %s" % (filename)
-          print"the length of file is %i" % (len(f))
-          for line in f:
-            #print line.encode('hex')
+          f.read(6); # read the first 6 bytes and throw away, port and cmd code
+          data = f.read();
+          print"the length of file is %i" % (len(data))
+          for line in data:
+            print line.encode('hex')
             tempBuffer.append(line)
           return tempBuffer
           
@@ -1094,6 +1103,8 @@ class LED_TAB:
             tempBuffer.append(r)
             tempBuffer.append(g)
             tempBuffer.append(b)
+          print"There was no .dat file so creating one";
+          self.update_file_LED_DAT(filename,tempBuffer)
           #print"get_bytes_from_file: tempBuffer"
           #print tempBuffer
           return tempBuffer
@@ -1127,18 +1138,15 @@ class LED_TAB:
           r = int(s+0)
           g = int(s+1)
           b = int(s+2)
-          setLED = "As%02i%02i%03i%03i%03iz" % ( x,y,r,g,b )
+          setLED = "80As..%02i%02i%03i%03i%03iz" % ( x,y,r,g,b )
           #print"send array coord = %16s X=%02i, Y=%02i  Array= #%02X%02X%02X  %s"% (str(s), x, y, r, g, b, setLED )
-          self.q.put(setLED) # write a string to the tx port via tx_queue
+          self.q1.put(setLED) # write a string to the tx port via tx_queue1
     
     def send_array_as_bin(self,array):
-        # array is a buffer length 192 = 8x * 8y * 3 bytes
+        # array is a buffer length 192 = 8x * 8y * 3 bytes(RGB)
         print("send_array_as_bin: The array length is: %i"%( len(array)))
-        msg = buffer(b"Fd") + array
-        self.q.put(msg) # send array
-        #msg = buffer(b"Fp") + array
-        #self.q.put(msg) # send array
-        #print msg.encode('hex')
+        msg = buffer(b"80Fd..") + array
+        self.q1.put(msg) # send array
         
     def return_bigMatrix_from_bytearray(self,matrix):
         localBigMatrix = [['#000000' for x in xrange(8)] for x in xrange(8)]
